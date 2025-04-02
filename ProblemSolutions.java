@@ -9,6 +9,7 @@
  *
  ********************************************************************/
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.PriorityQueue;
 
@@ -63,13 +64,48 @@ public class ProblemSolutions {
      * returning the 0 if queue is empty else return pq.peek().
      */
 
-  public static int lastBoulder(int[] boulders) {
+    public static int lastBoulder(int[] boulders) {
+        // base cases
+        if (boulders.length == 0) {
+            return 0;
+        }
+        if (boulders.length == 1) {
+            return boulders[0];
+        }
 
-      //
-      // ADD YOUR CODE HERE - DO NOT FORGET TO ADD YOUR NAME / SECTION # ABOVE
-      //
-      return -1;
-  }
+        // insertion sort
+        for (int i = 0; i < boulders.length; i++) {
+            int key = boulders[i];
+            int j = i - 1;
+            while (j >= 0 && boulders[j] > key) {
+                boulders[j + 1] = boulders[j];
+                j = j - 1;
+            }
+            boulders[j + 1] = key;
+        }
+
+        int temp1stBiggest = boulders[boulders.length - 1];
+        int temp2ndBiggest = boulders[boulders.length - 2];
+
+        int[] recursiveArray;
+
+        if (temp1stBiggest == temp2ndBiggest) {
+            recursiveArray = new int[boulders.length - 2];
+            for (int i = 0; i < recursiveArray.length; i++) {
+                recursiveArray[i] = boulders[i];
+            }
+        } else {
+            int newInput = temp1stBiggest - temp2ndBiggest;
+            recursiveArray = new int[boulders.length - 1];
+            for (int i = 0; i < recursiveArray.length - 1; i++) {
+                recursiveArray[i] = boulders[i];
+            }
+            recursiveArray[recursiveArray.length - 1] = newInput;
+        }
+
+        return lastBoulder(recursiveArray);
+    }
+
 
 
     /**
@@ -94,7 +130,27 @@ public class ProblemSolutions {
         //
         //  YOUR CODE GOES HERE
         //
-        return new ArrayList<>();  // Make sure result is sorted in ascending order
+
+        HashMap<String, Integer> countMap = new HashMap<>();
+
+        for (String tempObserve : input) {
+            if (countMap.containsKey(tempObserve)) {
+                countMap.put(tempObserve, countMap.get(tempObserve) + 1);
+            } else {
+                countMap.put(tempObserve, 1);
+            }
+        }
+
+        ArrayList<String> duplicatesArray = new ArrayList<>();
+
+        for (String tempObserve : countMap.keySet()) {
+            if (countMap.get(tempObserve) > 1) {
+                duplicatesArray.add(tempObserve);
+            }
+        }
+        Collections.sort(duplicatesArray);
+
+        return duplicatesArray;
 
     }
 
@@ -134,6 +190,29 @@ public class ProblemSolutions {
         //
         //  YOUR CODE GOES HERE
         //
-        return new ArrayList<>();  // Make sure returned lists is sorted as indicated above
+
+        ArrayList<String> resultTHing = new ArrayList<>();
+        HashSet<Integer> seenArrayKeepTrack = new HashSet<>();
+        HashSet<String> addedArrayKeepTrack = new HashSet<>();
+
+        for (int i = 0; i < input.length; i++) {
+            int currentTemp = input[i];
+            int targetNum = k - currentTemp;
+
+            if (seenArrayKeepTrack.contains(targetNum)) {
+                int low = Math.min(currentTemp, targetNum);
+                int high = Math.max(currentTemp, targetNum);
+                String pairString = "(" + low + ", " + high + ")";
+                if (!addedArrayKeepTrack.contains(pairString)) {
+                    resultTHing.add(pairString);
+                    addedArrayKeepTrack.add(pairString);
+                }
+            }
+
+            seenArrayKeepTrack.add(currentTemp);
+        }
+
+        Collections.sort(resultTHing); // make sure it's sorted between pairs too
+        return resultTHing;
     }
 }
