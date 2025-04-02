@@ -78,10 +78,10 @@ import java.util.Comparator;
 class PriorityQueue<E, P> {
 
     private static final int DEFAULT_CAPACITY = 10; // initial queue size
-  
+
     final Comparator<P> comparator;
     final ArrayList<Node> tree;       // The Heap is stored in an array as a tree
-                                      // with the root at index 0 (not 1)
+    // with the root at index 0 (not 1)
 
     /*
      * Constructors
@@ -152,7 +152,10 @@ class PriorityQueue<E, P> {
     public Node add(E e, P priority) {
 
         // YOUR CODE GOES HERE
-        return null;
+        Node temp = new Node(e,priority, tree.size());
+        tree.add(temp);
+        pullUp(temp.idx);
+        return temp;
     }
 
 
@@ -167,6 +170,12 @@ class PriorityQueue<E, P> {
      */
 
     public boolean contains(E e) {
+
+        for (Node test : tree) {
+            if (test.value().equals(e)) {
+                return true;
+            }
+        }
 
         // ADD YOUR CODE HERE
         return false;
@@ -312,11 +321,11 @@ class PriorityQueue<E, P> {
      */
 
     public ArrayList<E> toArray() {
-         ArrayList<E> array = new ArrayList<>();
-         for (int i=0 ; i < size() ; i++) {
+        ArrayList<E> array = new ArrayList<>();
+        for (int i=0 ; i < size() ; i++) {
             array.add(tree.get(i).value());
         }
-         return array;
+        return array;
     }
 
 
@@ -440,8 +449,8 @@ class PriorityQueue<E, P> {
                 final Node nodeToMoveToThisIdx = tree.remove(tree.size() - 1);
                 nodeToMoveToThisIdx.idx = idx;
                 tree.set(idx, nodeToMoveToThisIdx);
-                if (compare(tree.get(parent(idx)).priority, 
-                                            nodeToMoveToThisIdx.priority) > 0) {
+                if (compare(tree.get(parent(idx)).priority,
+                        nodeToMoveToThisIdx.priority) > 0) {
                     pullUp(idx);
                 } else {
                     pushDown(idx);
